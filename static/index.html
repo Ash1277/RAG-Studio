@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>RAG Studio 1.0</title>
+  <link rel="stylesheet" href="/static/styles.css?v=1.0">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">R</div>
+        <div class="brand-text">
+          <b>RAG Studio <span class="brand-ver">v1.0</span></b>
+        </div>
+      </div>
+
+      <button class="new-chat" id="newChat" type="button">
+        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        <span>New conversation</span>
+      </button>
+
+      <nav class="side-nav" aria-label="Primary navigation">
+        <button class="nav-item" data-view="home" type="button">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19.5v-9z"/><path d="M9 21V13h6v8"/></svg>
+          <span>Home</span>
+        </button>
+        <div class="side-section">
+          <button class="nav-item active" data-view="chat" type="button">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span>Ask documents</span>
+          </button>
+          <button class="nav-item" data-view="research" type="button">
+            <svg class="nav-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="16" rx="1.5"/></svg>
+            <span>Research &amp; compare</span>
+          </button>
+          <button class="nav-item" data-view="study" type="button">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span>Study mode</span>
+          </button>
+          <button class="nav-item" data-view="history" type="button">
+            <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+            <span>History</span>
+          </button>
+        </div>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText" class="status-text">Checking service…</span>
+        <div class="sidebar-bottom-actions">
+          <button id="themesButton" class="icon-button" title="Appearance &amp; themes" type="button">
+            <svg class="ui-icon" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+          </button>
+          <button id="settingsButton" class="icon-button" title="Workspace settings" type="button">
+            <svg class="ui-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-titles">
+          <h1 id="pageTitle">Home</h1>
+        </div>
+        <div class="top-actions">
+          <button id="toggleDrawerBtn" class="outline-button drawer-toggle-btn" type="button" aria-expanded="false" aria-controls="knowledgeDrawer" title="Manage Knowledge Base sources">
+            <svg class="ui-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+            <span>Sources</span>
+            <span id="drawerCountBadge" class="badge-pill">0</span>
+            <span class="dropdown-caret">⌄</span>
+          </button>
+          <span class="local-pill" id="modelInfo" title="Active generation model">Loading…</span>
+        </div>
+      </header>
+
+      <div class="workspace">
+        <!-- FLOATING KNOWLEDGE BASE DROPDOWN POPOVER -->
+        <aside class="right-panel knowledge-popover hidden" id="knowledgeDrawer" aria-label="Knowledge base dropdown">
+          <div class="panel-heading">
+            <div>
+              <h3>Knowledge base</h3>
+              <p id="docCount">0 sources in library</p>
+            </div>
+            <div class="panel-heading-actions">
+              <button id="clearAllDocs" class="text-button danger-text-btn" title="Remove all documents and websites from Knowledge Base" type="button" disabled>Clear all</button>
+              <button id="refreshDocs" class="icon-button" title="Refresh library" type="button">↻</button>
+              <button id="closeDrawerBtn" class="icon-button" title="Close Knowledge Base" type="button">×</button>
+            </div>
+          </div>
+
+          <div class="knowledge-actions">
+            <button id="openUpload" class="primary-button" type="button">＋ Add files</button>
+            <button id="openWebsite" class="outline-button" type="button">↗ Add URL</button>
+          </div>
+          <input id="fileInput" type="file" accept=".pdf,.txt,.md,.docx,.xlsx,.xls,.pptx,.csv,.png,.jpg,.jpeg,.webp" multiple hidden>
+
+          <div class="library-tabs" role="tablist">
+            <button class="library-tab active" data-library="all" type="button">All</button>
+            <button class="library-tab" data-library="documents" type="button">Files</button>
+            <button class="library-tab" data-library="websites" type="button">Links</button>
+          </div>
+
+          <div class="doc-list-toolbar">
+            <div class="doc-list-heading">
+              <span>ACTIVE IN CHAT</span>
+              <span id="docCountSmall" class="badge-pill">0</span>
+            </div>
+            <div class="source-selection-actions">
+              <button id="selectAllSources" class="text-button" type="button">Select all</button>
+              <button id="clearSourceSelection" class="text-button" type="button">Clear</button>
+            </div>
+          </div>
+
+          <div id="documentList" class="document-list">
+            <div class="empty-docs">Upload a file or add a web page to get started.</div>
+          </div>
+
+          <div class="panel-note">
+            Files &amp; vectors stay local. Re-uploading a modified file tracks version history automatically.
+          </div>
+        </aside>
+        <!-- HOME VIEW -->
+        <section class="view active" id="view-home">
+          <div class="home-page">
+            <div class="home-hero">
+              <h2>What would you like to <span>figure out today?</span></h2>
+              <p>Query your indexed files, run side-by-side multi-source comparisons, or generate structured study material.</p>
+              <div class="home-prompt">
+                <svg class="prompt-search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+                <textarea id="homeQuestion" rows="1" placeholder="Ask anything about your documents…"></textarea>
+                <kbd class="kbd-hint" title="Press Enter to ask">↵</kbd>
+                <button id="homeAsk" class="send-button" title="Start chat" type="button">
+                  <svg class="ui-icon" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="home-actions">
+              <button data-home-action="upload" type="button">
+                <span class="action-icon">
+                  <svg class="ui-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+                </span>
+                <div class="action-copy">
+                  <b>Upload files &amp; images</b>
+                  <small>Index PDF, DOCX, XLSX, PPTX, CSV, TXT, MD &amp; OCR images locally</small>
+                </div>
+              </button>
+              <button data-home-action="website" type="button">
+                <span class="action-icon">
+                  <svg class="ui-icon" viewBox="0 0 24 24"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                </span>
+                <div class="action-copy">
+                  <b>Import web URL</b>
+                  <small>Fetch, clean, and index any public documentation or web article</small>
+                </div>
+              </button>
+              <button data-home-action="research" type="button">
+                <span class="action-icon">
+                  <svg class="ui-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="16" rx="1.5"/></svg>
+                </span>
+                <div class="action-copy">
+                  <b>Compare &amp; research</b>
+                  <small>Synthesize 2–5 sources with per-document coverage &amp; tabular diffs</small>
+                </div>
+              </button>
+              <button data-home-action="study" type="button">
+                <span class="action-icon">
+                  <svg class="ui-icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                </span>
+                <div class="action-copy">
+                  <b>Study mode &amp; quizzes</b>
+                  <small>Build structured revision notes, glossaries, flashcards &amp; MCQ tests</small>
+                </div>
+              </button>
+            </div>
+
+            <div class="home-overview-grid">
+              <div class="home-panel">
+                <div class="home-panel-head">
+                  <div>
+                    <span class="eyebrow">INDEXED SOURCES</span>
+                    <h3>Knowledge Library</h3>
+                  </div>
+                  <button type="button" class="text-button" data-home-action="upload">＋ Add source</button>
+                </div>
+                <div id="homeRecentDocs" class="home-mini-list">
+                  <div class="home-mini-empty">No documents indexed yet. Upload files or add a URL to populate your library.</div>
+                </div>
+              </div>
+
+              <div class="home-panel">
+                <div class="home-panel-head">
+                  <div>
+                    <span class="eyebrow">CONTINUE WORKING</span>
+                    <h3>Recent Conversations</h3>
+                  </div>
+                  <button type="button" class="text-button" id="homeViewAllHistory">View history →</button>
+                </div>
+                <div id="homeRecentChats" class="home-mini-list">
+                  <div class="home-mini-empty">No saved conversations yet. Ask a question above to start your first session.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- CHAT VIEW -->
+        <section class="view" id="view-chat">
+          <div class="chat-layout" id="chatLayout">
+            <div class="chat-main">
+              <div class="chat-scroll-region" id="chatScrollRegion">
+                <div id="welcome" class="welcome">
+                  <h2>What would you like to discover?</h2>
+                  <p>Ask a question across your selected sources. Click any <code>[Source N]</code> citation to inspect the passage.</p>
+                  <div class="suggestions">
+                    <button class="suggestion" data-prompt="Summarize the key ideas in my documents" type="button">
+                      <div class="suggestion-title">Summarize key ideas</div>
+                      <div class="suggestion-sub">High-level synthesis with citations <span>↗</span></div>
+                    </button>
+                    <button class="suggestion" data-prompt="What are the most important definitions and concepts?" type="button">
+                      <div class="suggestion-title">Find key definitions</div>
+                      <div class="suggestion-sub">Extract core terminology &amp; concepts <span>↗</span></div>
+                    </button>
+                    <button class="suggestion" data-prompt="What evidence in the documents answers my main question?" type="button">
+                      <div class="suggestion-title">Find supporting evidence</div>
+                      <div class="suggestion-sub">Locate exact passages &amp; metrics <span>↗</span></div>
+                    </button>
+                  </div>
+                </div>
+                <div id="chatMessages" class="chat-messages"></div>
+              </div>
+
+              <div class="composer-wrap">
+                <div class="composer">
+                  <textarea id="questionInput" rows="1" placeholder="Ask a question about your selected sources…"></textarea>
+                  <kbd class="kbd-hint" title="Press Enter to send">↵</kbd>
+                  <button id="sendButton" class="send-button" title="Send question" type="button">↑</button>
+                </div>
+                <div class="composer-meta">
+                  <div class="composer-meta-left">
+                    <button id="selectedSourcesBadge" type="button" class="source-status-pill source-pill-btn" title="Manage active sources">＋ Pick a source ⌄</button>
+                  </div>
+                  <label class="toggle">
+                    <input id="rerankToggle" type="checkbox">
+                    <span class="toggle-ui"></span>
+                    <span>Cross-encoder rerank</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+        </section>
+
+        <!-- RESEARCH VIEW -->
+        <section class="view" id="view-research">
+          <div class="studio-view-scroll">
+            <div class="tool-card studio-fill-card">
+              <div class="tool-header">
+                <div class="tool-icon">
+                  <svg class="ui-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="16" rx="1.5"/></svg>
+                </div>
+                <div>
+                  <h2>Research &amp; Multi-Document Comparison</h2>
+                  <p>Synthesize evidence across documents, inspect per-document passage coverage, and compute cell-level Excel/CSV diffs.</p>
+                </div>
+              </div>
+
+              <div class="research-grid">
+                <div class="research-col-main">
+                  <label for="researchTask">Research question or analytical task</label>
+                  <textarea id="researchTask" rows="6" placeholder="Compare the approaches described in my documents. Highlight similarities, differences, and evidence gaps."></textarea>
+                  <div class="quick-templates-row">
+                    <span class="template-label">TEMPLATES:</span>
+                    <button type="button" class="template-chip" data-research-template="Compare the core methodologies, key assumptions, and conclusions across my documents. Highlight agreements and differences.">Methodology comparison</button>
+                    <button type="button" class="template-chip" data-research-template="Identify any conflicting metrics, contradictions, or unsupported claims across the selected sources, citing exact passages.">Contradiction audit</button>
+                    <button type="button" class="template-chip" data-research-template="Produce a structured executive synthesis of all key findings, metrics, and evidence gaps across the documents.">Executive synthesis</button>
+                  </div>
+                  <div class="form-row">
+                    <label class="checkline">
+                      <input id="researchRerank" type="checkbox">
+                      <span>Use local cross-encoder reranker</span>
+                    </label>
+                    <button id="runResearch" class="primary-button" type="button">Run research ↗</button>
+                  </div>
+                </div>
+
+                <div class="compare-controls">
+                  <label for="compareDocs">Scope to specific sources (select 2–5 to compare)</label>
+                  <select id="compareDocs" multiple size="6" aria-label="Select up to five documents"></select>
+                  <button id="compareDocuments" class="outline-button" type="button">Compare selected documents</button>
+                </div>
+              </div>
+
+              <div id="researchPlaceholder" class="studio-stage-placeholder">
+                <div class="placeholder-head">
+                  <span class="eyebrow">ANALYTICAL OUTPUT STRUCTURE</span>
+                  <h4>How Research &amp; Comparison Works</h4>
+                  <p>Select up to 5 documents on the right (or run across your entire library). Every report is structured into five verifiable sections:</p>
+                </div>
+                <div class="placeholder-steps-grid">
+                  <div class="step-card"><b>01 · Coverage Audit</b><span>Reports exact retrieved passage counts per selected source so no document is silently ignored.</span></div>
+                  <div class="step-card"><b>02 · Source Breakdown</b><span>Summarizes key evidence, tables, and claims isolated by individual document.</span></div>
+                  <div class="step-card"><b>03 · Agreements &amp; Contrasts</b><span>Highlights shared conclusions vs. true metric or methodological differences.</span></div>
+                  <div class="step-card"><b>04 · Tabular &amp; Gap Analysis</b><span>Pre-computes Excel/CSV cell-level diffs and flags missing evidence honestly.</span></div>
+                </div>
+              </div>
+
+              <div id="researchResult" class="result-panel hidden"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- STUDY VIEW -->
+        <section class="view" id="view-study">
+          <div class="studio-view-scroll">
+            <div class="tool-card study-card studio-fill-card">
+              <div class="tool-header">
+                <div class="tool-icon">
+                  <svg class="ui-icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                </div>
+                <div>
+                  <h2>Study Mode</h2>
+                  <p>Generate evidence-backed detailed notes, summaries, definitions, flashcards, review prompts, or practice quizzes.</p>
+                </div>
+                <div class="study-mode-switch">
+                  <button class="study-mode active" data-study-view="material" type="button">Study material</button>
+                  <button class="study-mode" data-study-view="quiz" type="button">Quizzes &amp; tests</button>
+                </div>
+              </div>
+
+              <div id="studyMaterialPane" class="study-pane">
+                <div class="form-grid-3">
+                  <div>
+                    <label for="studyKind">Material type</label>
+                    <select id="studyKind">
+                      <option value="notes">Detailed study notes</option>
+                      <option value="summary" selected>Revision summary</option>
+                      <option value="definitions">Important definitions</option>
+                      <option value="flashcards">Flashcards</option>
+                      <option value="questions">Important study prompts</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="studyCount">Number of items</label>
+                    <select id="studyCount">
+                      <option>5</option>
+                      <option>8</option>
+                      <option>10</option>
+                      <option>15</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="studySource">Source collection</label>
+                    <select id="studySource">
+                      <option value="all">All indexed documents</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="pane-actions">
+                  <button id="generateStudy" class="primary-button" type="button">Generate study material ↗</button>
+                </div>
+
+                <div id="studyPlaceholder" class="studio-stage-placeholder">
+                  <div class="placeholder-head">
+                    <span class="eyebrow">CHOOSE A FORMAT OR CLICK ANY CARD BELOW</span>
+                    <h4>Available Study &amp; Revision Formats</h4>
+                    <p>Every study guide is synthesized strictly from your indexed documents with clickable inline <code>[Source N]</code> citations and Markdown export.</p>
+                  </div>
+                  <div class="placeholder-steps-grid">
+                    <div class="step-card clickable-step" data-study-pick="notes"><b>Detailed Study Notes</b><span>Multi-section breakdown with mechanisms, examples, and passage citations.</span></div>
+                    <div class="step-card clickable-step" data-study-pick="summary"><b>Revision Summary</b><span>High-level core concepts, key takeaways, and a rapid pre-exam recap.</span></div>
+                    <div class="step-card clickable-step" data-study-pick="definitions"><b>Important Definitions</b><span>Clean terminology glossary with exact contextual definitions from your sources.</span></div>
+                    <div class="step-card clickable-step" data-study-pick="flashcards"><b>Active-Recall Flashcards</b><span>Front/Back study cards and self-check review prompts with answer outlines.</span></div>
+                  </div>
+                </div>
+
+                <div id="studyResult" class="result-panel hidden"></div>
+              </div>
+
+              <div id="studyQuizPane" class="study-pane hidden">
+                <div class="form-grid">
+                  <div>
+                    <label for="quizCount">Number of questions</label>
+                    <select id="quizCount">
+                      <option>5</option>
+                      <option>8</option>
+                      <option>10</option>
+                      <option>15</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="quizSource">Source collection</label>
+                    <select id="quizSource">
+                      <option value="all">All indexed documents</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="pane-actions">
+                  <button id="generateQuiz" class="primary-button" type="button">Generate quiz ↗</button>
+                </div>
+
+                <div id="quizPlaceholder" class="studio-stage-placeholder">
+                  <div class="placeholder-head">
+                    <span class="eyebrow">INTERACTIVE PRACTICE ENGINE</span>
+                    <h4>Batched Multiple-Choice Quizzes</h4>
+                    <p>Questions are generated in resilient 3-question batches with automatic schema repair, one-at-a-time navigation, and detailed post-submission explanations.</p>
+                  </div>
+                  <div class="placeholder-steps-grid">
+                    <div class="step-card"><b>4-Option MCQs</b><span>Grounded strictly in retrieved passages from your chosen document or full library.</span></div>
+                    <div class="step-card"><b>Step-by-Step Player</b><span>Navigate with Previous/Next controls while tracking answered progress.</span></div>
+                    <div class="step-card"><b>Instant Scoring</b><span>Answers stay hidden until submission, then reveal your percentage score.</span></div>
+                    <div class="step-card"><b>Cited Explanations</b><span>Review why each option is correct or incorrect alongside the source reference.</span></div>
+                  </div>
+                </div>
+
+                <div id="quizResult" class="result-panel hidden"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- HISTORY VIEW -->
+        <section class="view" id="view-history">
+          <div class="studio-view-scroll">
+            <div class="tool-card history-card studio-fill-card">
+              <div class="history-heading">
+                <div class="tool-header">
+                  <div class="tool-icon">
+                    <svg class="ui-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+                  </div>
+                  <div>
+                    <h2>Conversation History</h2>
+                    <p>Reopen, rename, export, or remove saved conversations with their original source selections intact.</p>
+                  </div>
+                </div>
+                <div class="history-top-actions">
+                  <button id="historyStartChat" class="primary-button" type="button">＋ New conversation</button>
+                  <button id="clearHistory" class="outline-button danger-outline" type="button">Clear history</button>
+                </div>
+              </div>
+              <div id="historyList" class="history-list">
+                <div class="empty-docs">Loading conversations…</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- UPLOAD MODAL -->
+  <div class="modal hidden" id="uploadModal">
+    <div class="modal-card upload-modal-card">
+      <button class="modal-close" id="closeUpload" type="button" aria-label="Close">×</button>
+      <div class="eyebrow">ADD TO YOUR KNOWLEDGE BASE</div>
+      <h2>Add sources</h2>
+      <p>Upload local documents or images (up to 20 files, 40 MB each) or index a public web page.</p>
+
+      <div class="upload-zone" id="dropZone">
+        <div class="upload-icon">↑</div>
+        <b>Drop files here or browse from your computer</b>
+        <p>Supported: PDF, TXT, MD, DOCX, XLSX, XLS, PPTX, CSV, PNG, JPG, WEBP</p>
+        <button id="chooseFiles" class="primary-button" type="button">Choose files</button>
+        <div id="uploadStatus" class="upload-status" aria-live="polite"></div>
+      </div>
+
+      <div class="url-add">
+        <label for="urlInput">Import a public web page</label>
+        <div class="url-row">
+          <input id="urlInput" type="url" placeholder="https://example.com/article">
+          <button id="addUrl" class="outline-button" type="button">Add URL</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VERSION HISTORY MODAL -->
+  <div class="modal hidden" id="versionsModal">
+    <div class="modal-card upload-modal-card">
+      <button class="modal-close" id="closeVersions" type="button" aria-label="Close">×</button>
+      <div class="eyebrow">DOCUMENT VERSION CONTROL</div>
+      <h2 id="versionsModalTitle">Version history</h2>
+      <p>Inspect modified document versions, view line-level changes, or restore an earlier revision.</p>
+      <div id="versionsContent" class="versions-content"></div>
+    </div>
+  </div>
+
+  <!-- APPEARANCE & THEMES MODAL -->
+  <div class="modal hidden" id="themesModal">
+    <div class="modal-card">
+      <button class="modal-close" id="closeThemes" type="button" aria-label="Close">×</button>
+      <h2>Appearance &amp; themes</h2>
+      <p>Choose a surface palette for your workspace.</p>
+
+      <div class="theme-swatch-grid" id="themeSwatchGrid">
+        <button type="button" class="theme-swatch" data-theme-pick="ghost">
+          <span class="swatch-dot" style="background:#ffffff;border-color:#09090b"></span>
+          <span class="swatch-meta"><b>Monochrome Swiss</b><small>White &amp; Black</small></span>
+        </button>
+        <button type="button" class="theme-swatch" data-theme-pick="ghost-dark">
+          <span class="swatch-dot" style="background:#09090b;border-color:#ffffff"></span>
+          <span class="swatch-meta"><b>Monochrome Swiss (B&amp;W)</b><small>Black &amp; White</small></span>
+        </button>
+        <button type="button" class="theme-swatch" data-theme-pick="sand">
+          <span class="swatch-dot" style="background:#b4532a;border-color:#f7f4ef"></span>
+          <span class="swatch-meta"><b>Editorial Espresso</b><small>Warm Archival Cream</small></span>
+        </button>
+        <button type="button" class="theme-swatch" data-theme-pick="midnight">
+          <span class="swatch-dot" style="background:#38bdf8;border-color:#111723"></span>
+          <span class="swatch-meta"><b>Obsidian Carbon</b><small>Deep Slate &amp; Cyan</small></span>
+        </button>
+        <button type="button" class="theme-swatch" data-theme-pick="dark">
+          <span class="swatch-dot" style="background:#a6b8ff;border-color:#10131b"></span>
+          <span class="swatch-meta"><b>Absolute Dark</b><small>OLED Carbon</small></span>
+        </button>
+        <button type="button" class="theme-swatch" data-theme-pick="ocean">
+          <span class="swatch-dot" style="background:#0284c7;border-color:#d8eaf6"></span>
+          <span class="swatch-meta"><b>Blueprint Cobalt</b><small>Tinted Steel-Blue</small></span>
+        </button>
+        <button type="button" class="theme-swatch" data-theme-pick="forest">
+          <span class="swatch-dot" style="background:#34d399;border-color:#12201b"></span>
+          <span class="swatch-meta"><b>Matcha Cypress</b><small>Deep Forest &amp; Mint</small></span>
+        </button>
+        <button type="button" class="theme-swatch" data-theme-pick="lavender">
+          <span class="swatch-dot" style="background:#c084fc;border-color:#191226"></span>
+          <span class="swatch-meta"><b>Velvet Dusk</b><small>Deep Plum &amp; Violet</small></span>
+        </button>
+      </div>
+
+      <button id="closeThemesBottom" class="primary-button modal-done-btn" type="button">Done</button>
+    </div>
+  </div>
+
+  <!-- WORKSPACE SETTINGS MODAL -->
+  <div class="modal hidden" id="settingsModal">
+    <div class="modal-card">
+      <button class="modal-close" id="closeSettings" type="button" aria-label="Close">×</button>
+      <h2>Workspace settings</h2>
+      <p>Manage your Groq API credential and workspace backups.</p>
+      <div id="firstLaunchBanner" class="first-launch-banner hidden">Welcome to RAG Studio 1.0! Paste your Groq API key below to get started.</div>
+
+      <div id="settingsDetails" class="settings-details"></div>
+
+      <div class="key-settings">
+        <label for="groqApiKey">Groq API key</label>
+        <div class="key-input-row">
+          <input id="groqApiKey" type="password" value="" autocomplete="off" spellcheck="false" placeholder="Paste your Groq API key (gsk_...)">
+          <button id="saveGroqKey" class="primary-button" type="button">Save key</button>
+        </div>
+        <div class="key-actions">
+          <span id="keyStatus" class="muted tiny">Checking key status…</span>
+          <button id="removeGroqKey" class="text-button" type="button">Remove saved key</button>
+        </div>
+        <small>Validated against Groq and stored in your OS credential store. Never returned or displayed after saving.</small>
+      </div>
+
+      <div class="backup-settings">
+        <label>Workspace backup &amp; restore</label>
+        <div class="restore-row">
+          <a href="/api/backup" class="outline-button backup-link">↓ Download backup ZIP</a>
+          <input id="restoreFileInput" type="file" accept=".zip" hidden>
+          <button id="restoreBackupBtn" class="outline-button" type="button">↑ Restore backup ZIP</button>
+        </div>
+        <span id="restoreStatus" class="muted tiny"></span>
+      </div>
+
+      <button id="closeSettingsBottom" class="primary-button modal-done-btn" type="button">Done</button>
+    </div>
+  </div>
+
+  <div id="toastRegion" class="toast-region" aria-live="polite"></div>
+  <script src="/static/app.js?v=1.0"></script>
+</body>
+</html>

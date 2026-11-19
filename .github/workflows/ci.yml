@@ -1,0 +1,31 @@
+name: RAG Studio 1.0 CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Syntax & bytecode check
+        run: |
+          python -m py_compile api.py rag_core.py launcher.py app_paths.py quiz_service.py security.py storage.py
+
+      - name: Run automated test suite
+        run: |
+          python -m unittest discover -s tests -v
